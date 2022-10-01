@@ -18,9 +18,7 @@ public class Black_Team_Mechanum extends LinearOpMode {
     double speed = 10;
 
     @Override
-    public void runOpMode
-
-    {
+    public void runOpMode() {
         control_Hub = hardwareMap.get(Blinker.class, "Control Hub");
         b_left = hardwareMap.get(DcMotor.class, "b_left");
         b_right = hardwareMap.get(DcMotor.class, "b_right");
@@ -36,50 +34,45 @@ public class Black_Team_Mechanum extends LinearOpMode {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
         waitForStart();
-        double leftPower;
-        double rightPower;
-        double rightSlide;
-        double leftSlide;
-    }
-    while(opModeIsActive())
 
-    {
-        if (gamepad1.right_trigger > 0.1) {
-            rightSlide = (gamepad1.right_trigger * 0.7) + (speed / 20);
-            f_left.setPower(rightSlide);
-            f_right.setPower(-rightSlide);
-            b_left.setPower(-rightSlide);
-            b_right.setPower(rightSlide);
-        }
-        if (gamepad1.left_trigger > 0.1) {
-            leftSlide = (gamepad1.left_trigger * 0.7) + (speed / 20);
-            f_left.setPower(-leftSlide);
-            f_right.setPower(leftSlide);
-            b_left.setPower(leftSlide);
-            b_right.setPower(-leftSlide);
-        }
-        if (gamepad1.dpad_up) {
-            if (speed < 10) {
-                speed = speed + 1;
-                sleep(100);
+        while (opModeIsActive()) {
+            if (gamepad1.right_trigger > 0.1) {
+                double rightSlide = (gamepad1.right_trigger * 0.7) + (speed / 20);
+                f_left.setPower(rightSlide);
+                f_right.setPower(-rightSlide);
+                b_left.setPower(-rightSlide);
+                b_right.setPower(rightSlide);
             }
-        }
-        if (gamepad1.dpad_down) {
-            if (speed > 0) {
-              speed = speed - 1;
-              sleep(100);
+            if (gamepad1.left_trigger > 0.1) {
+                double leftSlide = (gamepad1.left_trigger * 0.7) + (speed / 20);
+                f_left.setPower(-leftSlide);
+                f_right.setPower(leftSlide);
+                b_left.setPower(leftSlide);
+                b_right.setPower(-leftSlide);
             }
+            if (gamepad1.dpad_up) {
+                if (speed < 10) {
+                    speed = speed + 1;
+                    sleep(100);
+                }
+            }
+            if (gamepad1.dpad_down) {
+                if (speed > 0) {
+                    speed = speed - 1;
+                    sleep(100);
+                }
+            }
+
+            double leftPower = -gamepad1.left_stick_y * (speed / 10);
+            double rightPower = -gamepad1.right_stick_y * (speed / 10);
+
+            f_left.setPower(leftPower);
+            f_right.setPower(rightPower);
+            b_left.setPower(leftPower);
+            b_right.setPower(rightPower);
+
+            telemetry.addData("Status", "Running");
+            telemetry.update();
         }
-
-        leftPower = -gamepad1.left_stick_y * (speed / 10);
-        rightPower = -gamepad1.right_stick_y * (speed / 10);
-
-        f_left.setPower(leftPower);
-        f_right.setPower(rightPower);
-        b_left.setPower(leftPower);
-        b_right.setPower(rightPower);
-
-        telemetry.addData("Status", "Running");
-        telemetry.update();
     }
 }
