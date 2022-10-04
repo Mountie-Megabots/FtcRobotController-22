@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-
+@TeleOp
 public class Black_Team_Mechanum extends LinearOpMode {
     private Blinker control_Hub;
     private DcMotor b_left;
