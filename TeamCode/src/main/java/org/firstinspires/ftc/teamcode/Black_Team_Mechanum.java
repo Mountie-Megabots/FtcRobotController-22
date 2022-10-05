@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.Gyroscope;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp
 public class Black_Team_Mechanum extends LinearOpMode {
@@ -14,6 +15,9 @@ public class Black_Team_Mechanum extends LinearOpMode {
     private DcMotor b_right;
     private DcMotor f_left;
     private DcMotor f_right;
+    private DcMotor armMotor;
+    private Servo servoRight;
+    private Servo servoLeft;
     private Gyroscope imu;
     double speed = 10;
 
@@ -24,6 +28,9 @@ public class Black_Team_Mechanum extends LinearOpMode {
         b_right = hardwareMap.get(DcMotor.class, "b_right");
         f_left = hardwareMap.get(DcMotor.class, "f_left");
         f_right = hardwareMap.get(DcMotor.class, "f_right");
+        armMotor = hardwareMap.get(DcMotor.class, "armMotor");
+        servoRight = hardwareMap.get(Servo.class, "servoRight");
+        servoLeft = hardwareMap.get(Servo.class, "servoLeft");
         imu = hardwareMap.get(Gyroscope.class, "imu");
 
         b_left.setDirection(DcMotor.Direction.REVERSE);
@@ -61,6 +68,26 @@ public class Black_Team_Mechanum extends LinearOpMode {
                     speed = speed - 1;
                     sleep(100);
                 }
+            }
+            if (gamepad2.a) {
+                armMotor.setPower(0.5);
+                sleep(100);
+
+            }
+            if (gamepad2.b) {
+                armMotor.setPower(-0.5);
+                sleep(100);
+
+            }
+
+            if (gamepad2.x) {
+                servoRight.setPosition(0.5);
+                servoLeft.setPosition(-0.5);
+            }
+
+            if (gamepad2.y) {
+                servoRight.setPosition(-0.5);
+                servoLeft.setPosition(0.5);
             }
 
             double leftPower = -gamepad1.left_stick_y * (speed / 10);
