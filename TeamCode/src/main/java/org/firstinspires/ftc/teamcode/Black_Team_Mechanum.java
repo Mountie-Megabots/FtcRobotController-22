@@ -44,6 +44,7 @@ public class Black_Team_Mechanum extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
+            /* Old drive code- Kevin said it was bad
             if (gamepad1.right_trigger > 0.1) {
                 double rightSlide = (gamepad1.right_trigger * 0.7) + (speed / 20);
                 f_left.setPower(rightSlide);
@@ -58,6 +59,15 @@ public class Black_Team_Mechanum extends LinearOpMode {
                 b_left.setPower(leftSlide);
                 b_right.setPower(-leftSlide);
             }
+
+            double leftPower = -gamepad1.left_stick_y * (speed / 10);
+            double rightPower = -gamepad1.right_stick_y * (speed / 10);
+
+            f_left.setPower(leftPower);
+            f_right.setPower(rightPower);
+            b_left.setPower(leftPower);
+            b_right.setPower(rightPower);
+
             if (gamepad1.dpad_up) {
                 if (speed < 10) {
                     speed = speed + 1;
@@ -69,7 +79,21 @@ public class Black_Team_Mechanum extends LinearOpMode {
                     speed = speed - 1;
 
                 }
-            }
+            }*/
+            double r = Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y);
+            double robotAngle = Math.atan2(gamepad1.left_stick_y, gamepad1.left_stick_x) - Math.PI / 4;
+            double rightX = gamepad1.right_stick_x;
+            final double v1 = r * Math.cos(robotAngle) + rightX;
+            final double v2 = r * Math.sin(robotAngle) - rightX;
+            final double v3 = r * Math.sin(robotAngle) + rightX;
+            final double v4 = r * Math.cos(robotAngle) - rightX;
+
+            f_left.setPower(v1);
+            f_right.setPower(v2);
+            b_left.setPower(v3);
+            b_right.setPower(v4);
+
+
             if (gamepad2.a) {
                 armMotor.setPower(0.5);
 
@@ -104,14 +128,6 @@ public class Black_Team_Mechanum extends LinearOpMode {
             servoLeft.setPosition(servoSetting);
             servoRight.setPosition(servoSetting);*/
 
-
-            double leftPower = -gamepad1.left_stick_y * (speed / 10);
-            double rightPower = -gamepad1.right_stick_y * (speed / 10);
-
-            f_left.setPower(leftPower);
-            f_right.setPower(rightPower);
-            b_left.setPower(leftPower);
-            b_right.setPower(rightPower);
 
             telemetry.addData("Status", "Running");
             telemetry.addData("Servo-Status",  servoSetting);
