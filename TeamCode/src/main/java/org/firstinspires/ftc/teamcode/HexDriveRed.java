@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @TeleOp(name = "XDriveRed")
@@ -13,6 +14,9 @@ public class HexDriveRed extends LinearOpMode{
     private DcMotor leftBackDrive = null;
     private DcMotor rightFrontDrive = null;
     private DcMotor rightBackDrive = null;
+    private DcMotor armMotor = null;
+    private Servo Toucan = null;
+    private Servo Sam = null;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -20,19 +24,45 @@ public class HexDriveRed extends LinearOpMode{
         leftBackDrive  = hardwareMap.get(DcMotor.class, "leftBackDrive");
         rightFrontDrive = hardwareMap.get(DcMotor.class, "rightFrontDrive");
         rightBackDrive = hardwareMap.get(DcMotor.class, "rightBackDrive");
-
         leftBackDrive.setDirection(DcMotorSimple.Direction.REVERSE);
         leftFrontDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+        armMotor = hardwareMap.get(DcMotor.class, "armMotor");
+        Toucan = hardwareMap.get(Servo.class, "Toucan");
+        Sam = hardwareMap. get(Servo.class, "Sam");
 
         waitForStart();
 
         while (opModeIsActive()) {
+
+            //Move arm
+            armMotor.setPower(gamepad2.left_stick_y);
+
+            /* servo tuning code
+            Toucan.setPosition(gamepad2.right_stick_y);
+            Sam.setPosition(gamepad2.right_stick_y);
+            */
+
+            // Close Claw
+            if(gamepad2.right_bumper){
+                Toucan.setPosition(1.0);
+                Sam.setPosition(.1);
+            }
+            //Open Claw
+            else if(gamepad2.left_bumper){
+                Toucan.setPosition(0);
+                Sam.setPosition(1);
+            }
+
+            telemetry.addData("Joystick-Y",gamepad2.right_stick_y);
+
             if (gamepad1.right_bumper) {
                 driveSimple();
             }
             else {
                 drive();
             }
+
+            telemetry.update();
         }
     }
     public void driveSimple(){
@@ -150,6 +180,5 @@ public class HexDriveRed extends LinearOpMode{
         leftBackDrive.setPower(leftBackPower);
         rightBackDrive.setPower(rightBackPower);
     }
-
 }
     
