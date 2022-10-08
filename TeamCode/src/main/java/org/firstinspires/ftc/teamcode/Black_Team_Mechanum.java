@@ -82,24 +82,27 @@ public class Black_Team_Mechanum extends LinearOpMode {
             }
 
 
-            if (gamepad2.x) {
-                servoRight.setPosition(servoSetting);
-                servoLeft.setPosition(servoSetting);
+             if (gamepad2.x) {
+                servoRight.setPosition(0.25);
+                servoLeft.setPosition(0.5);
             }
             //don't use y and x button (may break servos)
             if (gamepad2.y) {
-                servoRight.setPosition(servoSetting);
-                servoLeft.setPosition(servoSetting);
+                servoRight.setPosition(0);
+                servoLeft.setPosition(0.75);
             }
 
-             
 
-            if( gamepad2.a){
+            /*
+            if( gamepad2.x){
                 servoSetting = servoSetting + .01;
             }
-            else if( gamepad2.b){
+            else if( gamepad2.y){
                 servoSetting-= .01;
             }
+
+            servoLeft.setPosition(servoSetting);
+            servoRight.setPosition(servoSetting);*/
 
 
             double leftPower = -gamepad1.left_stick_y * (speed / 10);
