@@ -20,6 +20,7 @@ public class Black_Team_Mechanum extends LinearOpMode {
     private Servo servoLeft;
     private Gyroscope imu;
     double speed = 10;
+    double servoSetting = .5;
 
     @Override
     public void runOpMode() {
@@ -80,15 +81,29 @@ public class Black_Team_Mechanum extends LinearOpMode {
                 armMotor.setPower(0);
             }
 
-            if (gamepad2.x) {
-                servoRight.setPosition(0.5);
+
+             if (gamepad2.x) {
+                servoRight.setPosition(0.25);
                 servoLeft.setPosition(0.5);
             }
-
+            //don't use y and x button (may break servos)
             if (gamepad2.y) {
                 servoRight.setPosition(0);
-                servoLeft.setPosition(0);
+                servoLeft.setPosition(0.75);
             }
+
+
+            /*
+            if( gamepad2.x){
+                servoSetting = servoSetting + .01;
+            }
+            else if( gamepad2.y){
+                servoSetting-= .01;
+            }
+
+            servoLeft.setPosition(servoSetting);
+            servoRight.setPosition(servoSetting);*/
+
 
             double leftPower = -gamepad1.left_stick_y * (speed / 10);
             double rightPower = -gamepad1.right_stick_y * (speed / 10);
@@ -99,6 +114,7 @@ public class Black_Team_Mechanum extends LinearOpMode {
             b_right.setPower(rightPower);
 
             telemetry.addData("Status", "Running");
+            telemetry.addData("Servo-Status",  servoSetting);
             telemetry.update();
         }
     }
