@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -7,6 +8,12 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.robotcore.internal.camera.names.BuiltinCameraNameImpl;
 
 @TeleOp(name = "XDriveRed")
 public class HexDriveRed extends LinearOpMode{
@@ -17,20 +24,30 @@ public class HexDriveRed extends LinearOpMode{
     private DcMotor armMotor = null;
     private Servo Toucan = null;
     private Servo Sam = null;
+    BNO055IMU imu;
 
     @Override
     public void runOpMode() throws InterruptedException {
-        leftFrontDrive  = hardwareMap.get(DcMotor.class, "leftFrontDrive");
-        leftBackDrive  = hardwareMap.get(DcMotor.class, "leftBackDrive");
+        leftFrontDrive = hardwareMap.get(DcMotor.class, "leftFrontDrive");
+        leftBackDrive = hardwareMap.get(DcMotor.class, "leftBackDrive");
         rightFrontDrive = hardwareMap.get(DcMotor.class, "rightFrontDrive");
         rightBackDrive = hardwareMap.get(DcMotor.class, "rightBackDrive");
         leftBackDrive.setDirection(DcMotorSimple.Direction.REVERSE);
         leftFrontDrive.setDirection(DcMotorSimple.Direction.REVERSE);
         armMotor = hardwareMap.get(DcMotor.class, "armMotor");
         Toucan = hardwareMap.get(Servo.class, "Toucan");
-        Sam = hardwareMap. get(Servo.class, "Sam");
+        Sam = hardwareMap.get(Servo.class, "Sam");
 
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.mode = BNO055IMU.SensorMode.IMU;
+        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+        parameters.loggingEnabled = false;
+        imu.initialize(parameters);
         waitForStart();
+
+        while (!opModeIsActive()) {
+        }
 
         while (opModeIsActive()) {
 
@@ -54,6 +71,8 @@ public class HexDriveRed extends LinearOpMode{
             }
 
             telemetry.addData("Joystick-Y",gamepad2.right_stick_y);
+            telemetry.addData("Joystick-Y",gamepad2.right_stick_y);
+
 
             if (gamepad1.right_bumper) {
                 driveSimple();
@@ -65,6 +84,7 @@ public class HexDriveRed extends LinearOpMode{
             telemetry.update();
         }
     }
+
     public void driveSimple(){
         double power = .5;
         if (gamepad1.dpad_up) {
@@ -180,5 +200,13 @@ public class HexDriveRed extends LinearOpMode{
         leftBackDrive.setPower(leftBackPower);
         rightBackDrive.setPower(rightBackPower);
     }
+
+    public double getHeading(){
+        Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZXY, AngleUnit.DEGREES);
+        double heading = angles.firstAngle;
+        return heading;
+
+    }
+
 }
     
