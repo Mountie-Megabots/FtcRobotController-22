@@ -80,8 +80,8 @@ public class Black_Team_Mechanum extends LinearOpMode {
 
                 }
             }*/
-            double r = Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y);
-            double robotAngle = Math.atan2(gamepad1.left_stick_y, gamepad1.left_stick_x) - Math.PI / 4;
+            double r = Math.hypot(gamepad1.left_stick_x, -gamepad1.left_stick_y);
+            double robotAngle = Math.atan2(-gamepad1.left_stick_y, gamepad1.left_stick_x) - Math.PI / 4;
             double rightX = gamepad1.right_stick_x;
             final double v1 = r * Math.cos(robotAngle) + rightX;
             final double v2 = r * Math.sin(robotAngle) - rightX;
@@ -105,8 +105,16 @@ public class Black_Team_Mechanum extends LinearOpMode {
                 armMotor.setPower(0);
             }
 
-
-             if (gamepad2.x) {
+            if (gamepad2.x) {
+                servoRight.setPosition(1);
+                servoLeft.setPosition(0);
+            }
+            //don't use y and x button (may break servos)
+            if (gamepad2.y) {
+                servoRight.setPosition(0);
+                servoLeft.setPosition(1);
+            }
+             /*if (gamepad2.x) {
                 servoRight.setPosition(0.25);
                 servoLeft.setPosition(0.5);
             }
@@ -115,7 +123,6 @@ public class Black_Team_Mechanum extends LinearOpMode {
                 servoRight.setPosition(0);
                 servoLeft.setPosition(0.75);
             }
-
 
             /*
             if( gamepad2.x){
