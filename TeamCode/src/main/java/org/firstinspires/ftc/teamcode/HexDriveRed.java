@@ -54,6 +54,9 @@ public class HexDriveRed extends LinearOpMode{
             //Move arm
             armMotor.setPower(gamepad2.left_stick_y);
 
+            double heading = getHeading();
+            telemetry.addData("imu",heading);
+            
             /* servo tuning code
             Toucan.setPosition(gamepad2.right_stick_y);
             Sam.setPosition(gamepad2.right_stick_y);
@@ -205,7 +208,6 @@ public class HexDriveRed extends LinearOpMode{
         Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZXY, AngleUnit.DEGREES);
         double heading = angles.firstAngle;
         return heading;
-
     }
 
 }
