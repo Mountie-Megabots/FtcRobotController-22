@@ -1,12 +1,17 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Blinker;
-import com.qualcomm.robotcore.hardware.Gyroscope;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
+
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 @TeleOp
 public class Black_Team_Mechanum extends LinearOpMode {
@@ -18,7 +23,7 @@ public class Black_Team_Mechanum extends LinearOpMode {
     private DcMotor armMotor;
     private Servo servoRight;
     private Servo servoLeft;
-    private Gyroscope imu;
+    private BNO055IMU imu;
     double speed = 10;
     double servoSetting = .5;
 
@@ -32,7 +37,14 @@ public class Black_Team_Mechanum extends LinearOpMode {
         armMotor = hardwareMap.get(DcMotor.class, "armMotor");
         servoRight = hardwareMap.get(Servo.class, "servoRight");
         servoLeft = hardwareMap.get(Servo.class, "servoLeft");
-        imu = hardwareMap.get(Gyroscope.class, "imu");
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.mode = BNO055IMU.SensorMode.IMU;
+        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.loggingEnabled = false;
+        imu.initialize(parameters);
 
         b_left.setDirection(DcMotor.Direction.REVERSE);
         b_right.setDirection(DcMotor.Direction.FORWARD);
@@ -138,7 +150,14 @@ public class Black_Team_Mechanum extends LinearOpMode {
 
             telemetry.addData("Status", "Running");
             telemetry.addData("Servo-Status",  servoSetting);
+            telemetry.addData("Gyro", getHeading());
             telemetry.update();
         }
+    }
+    public double getHeading() {
+        Orientation angles =  imu.getAngularOrientation(AxesReference.INTRINSIC,
+                AxesOrder.ZYX, AngleUnit.DEGREES);
+        double heading = angles.firstAngle;
+        return heading;
     }
 }
