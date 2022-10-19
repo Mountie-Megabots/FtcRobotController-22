@@ -1,12 +1,20 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.robotcore.internal.camera.names.BuiltinCameraNameImpl;
 
 @TeleOp(name = "XDriveRed")
 public class HexDriveRed extends LinearOpMode{
@@ -15,28 +23,43 @@ public class HexDriveRed extends LinearOpMode{
     private DcMotor rightFrontDrive = null;
     private DcMotor rightBackDrive = null;
     private DcMotor armMotor = null;
-    private Servo Toucan = null;
-    private Servo Sam = null;
+    /*private Servo Toucan = null;
+    private Servo Sam = null;*/
+    private CRServo ToucanSam = null;
+    BNO055IMU imu;
 
     @Override
     public void runOpMode() throws InterruptedException {
-        leftFrontDrive  = hardwareMap.get(DcMotor.class, "leftFrontDrive");
-        leftBackDrive  = hardwareMap.get(DcMotor.class, "leftBackDrive");
+        leftFrontDrive = hardwareMap.get(DcMotor.class, "leftFrontDrive");
+        leftBackDrive = hardwareMap.get(DcMotor.class, "leftBackDrive");
         rightFrontDrive = hardwareMap.get(DcMotor.class, "rightFrontDrive");
         rightBackDrive = hardwareMap.get(DcMotor.class, "rightBackDrive");
         leftBackDrive.setDirection(DcMotorSimple.Direction.REVERSE);
         leftFrontDrive.setDirection(DcMotorSimple.Direction.REVERSE);
         armMotor = hardwareMap.get(DcMotor.class, "armMotor");
-        Toucan = hardwareMap.get(Servo.class, "Toucan");
-        Sam = hardwareMap. get(Servo.class, "Sam");
+        //Toucan = hardwareMap.get(Servo.class, "Toucan");
+        //Sam = hardwareMap.get(Servo.class, "Sam");
+        ToucanSam = hardwareMap.get(CRServo.class, "ToucanSam");
 
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.mode = BNO055IMU.SensorMode.IMU;
+        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+        parameters.loggingEnabled = false;
+        imu.initialize(parameters);
         waitForStart();
+
+        while (!opModeIsActive()) {
+        }
 
         while (opModeIsActive()) {
 
             //Move arm
             armMotor.setPower(gamepad2.left_stick_y);
 
+            double heading = getHeading();
+            telemetry.addData("imu",heading);
+            
             /* servo tuning code
             Toucan.setPosition(gamepad2.right_stick_y);
             Sam.setPosition(gamepad2.right_stick_y);
@@ -44,16 +67,22 @@ public class HexDriveRed extends LinearOpMode{
 
             // Close Claw
             if(gamepad2.right_bumper){
-                Toucan.setPosition(1.0);
-                Sam.setPosition(.1);
+                //Toucan.setPosition(1.0);
+                //Sam.setPosition(.1);
+                ToucanSam.setPower(1.0);
             }
             //Open Claw
             else if(gamepad2.left_bumper){
-                Toucan.setPosition(0);
-                Sam.setPosition(1);
+                //Toucan.setPosition(0);
+                //Sam.setPosition(1);
+                ToucanSam.setPower(-1.0);
             }
-
+            else{
+                ToucanSam.setPower(0);
+            }
             telemetry.addData("Joystick-Y",gamepad2.right_stick_y);
+            telemetry.addData("Joystick-Y",gamepad2.right_stick_y);
+
 
             if (gamepad1.right_bumper) {
                 driveSimple();
@@ -65,6 +94,7 @@ public class HexDriveRed extends LinearOpMode{
             telemetry.update();
         }
     }
+
     public void driveSimple(){
         double power = .5;
         if (gamepad1.dpad_up) {
@@ -180,5 +210,12 @@ public class HexDriveRed extends LinearOpMode{
         leftBackDrive.setPower(leftBackPower);
         rightBackDrive.setPower(rightBackPower);
     }
+
+    public double getHeading(){
+        Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZXY, AngleUnit.DEGREES);
+        double heading = angles.firstAngle;
+        return heading;
+    }
+
 }
     
