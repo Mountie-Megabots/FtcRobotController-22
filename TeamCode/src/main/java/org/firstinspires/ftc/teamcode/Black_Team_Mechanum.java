@@ -92,7 +92,8 @@ public class Black_Team_Mechanum extends LinearOpMode {
 
                 }
             }*/
-            double r = Math.hypot(gamepad1.left_stick_x, -gamepad1.left_stick_y);
+
+            /*double r = Math.hypot(gamepad1.left_stick_x, -gamepad1.left_stick_y);
             double robotAngle = Math.atan2(-gamepad1.left_stick_y, gamepad1.left_stick_x) - Math.PI / 4;
             double rightX = gamepad1.right_stick_x;
             final double v1 = r * Math.cos(robotAngle) + rightX;
@@ -103,7 +104,31 @@ public class Black_Team_Mechanum extends LinearOpMode {
             f_left.setPower(v1);
             f_right.setPower(v2);
             b_left.setPower(v3);
-            b_right.setPower(v4);
+            b_right.setPower(v4);*/
+
+            double y = -gamepad1.left_stick_y; // Remember, this is reversed!
+            double x = gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
+            double rx = gamepad1.right_stick_x;
+
+            // Read inverse IMU heading, as the IMU heading is CW positive
+            double botHeading = -imu.getAngularOrientation().firstAngle;
+
+            double rotX = x * Math.cos(botHeading) - y * Math.sin(botHeading);
+            double rotY = x * Math.sin(botHeading) + y * Math.cos(botHeading);
+
+            // Denominator is the largest motor power (absolute value) or 1
+            // This ensures all the powers maintain the same ratio, but only when
+            // at least one is out of the range [-1, 1]
+            double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
+            double frontLeftPower = (rotY + rotX + rx) / denominator;
+            double backLeftPower = (rotY - rotX + rx) / denominator;
+            double frontRightPower = (rotY - rotX - rx) / denominator;
+            double backRightPower = (rotY + rotX - rx) / denominator;
+
+            f_left.setPower(frontLeftPower);
+            b_left.setPower(backLeftPower);
+            f_right.setPower(frontRightPower);
+            b_right.setPower(backRightPower);
 
 
             if (gamepad2.a) {
