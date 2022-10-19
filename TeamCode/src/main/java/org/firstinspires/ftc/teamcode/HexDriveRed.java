@@ -4,6 +4,7 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -22,8 +23,9 @@ public class HexDriveRed extends LinearOpMode{
     private DcMotor rightFrontDrive = null;
     private DcMotor rightBackDrive = null;
     private DcMotor armMotor = null;
-    private Servo Toucan = null;
-    private Servo Sam = null;
+    /*private Servo Toucan = null;
+    private Servo Sam = null;*/
+    private CRServo ToucanSam = null;
     BNO055IMU imu;
 
     @Override
@@ -35,8 +37,9 @@ public class HexDriveRed extends LinearOpMode{
         leftBackDrive.setDirection(DcMotorSimple.Direction.REVERSE);
         leftFrontDrive.setDirection(DcMotorSimple.Direction.REVERSE);
         armMotor = hardwareMap.get(DcMotor.class, "armMotor");
-        Toucan = hardwareMap.get(Servo.class, "Toucan");
-        Sam = hardwareMap.get(Servo.class, "Sam");
+        //Toucan = hardwareMap.get(Servo.class, "Toucan");
+        //Sam = hardwareMap.get(Servo.class, "Sam");
+        ToucanSam = hardwareMap.get(CRServo.class, "ToucanSam");
 
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -64,15 +67,19 @@ public class HexDriveRed extends LinearOpMode{
 
             // Close Claw
             if(gamepad2.right_bumper){
-                Toucan.setPosition(1.0);
-                Sam.setPosition(.1);
+                //Toucan.setPosition(1.0);
+                //Sam.setPosition(.1);
+                ToucanSam.setPower(1.0);
             }
             //Open Claw
             else if(gamepad2.left_bumper){
-                Toucan.setPosition(0);
-                Sam.setPosition(1);
+                //Toucan.setPosition(0);
+                //Sam.setPosition(1);
+                ToucanSam.setPower(-1.0);
             }
-
+            else{
+                ToucanSam.setPower(0);
+            }
             telemetry.addData("Joystick-Y",gamepad2.right_stick_y);
             telemetry.addData("Joystick-Y",gamepad2.right_stick_y);
 
