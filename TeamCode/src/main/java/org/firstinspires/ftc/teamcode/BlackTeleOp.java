@@ -16,7 +16,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 @TeleOp
-public class Black_Team_Mechanum extends LinearOpMode {
+public class BlackTeleOp extends LinearOpMode {
     private Blinker control_Hub;
     private DcMotor b_left;
     private DcMotor b_right;
@@ -26,7 +26,7 @@ public class Black_Team_Mechanum extends LinearOpMode {
     private Servo servo;
     private BNO055IMU imu;
     double speed = 10;
-    double servoSetting = .5;
+    double servoSetting = 0;
 
     @Override
     public void runOpMode() {
@@ -56,55 +56,6 @@ public class Black_Team_Mechanum extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
-            /* Old drive code- Kevin said it was bad
-            if (gamepad1.right_trigger > 0.1) {
-                double rightSlide = (gamepad1.right_trigger * 0.7) + (speed / 20);
-                f_left.setPower(rightSlide);
-                f_right.setPower(-rightSlide);
-                b_left.setPower(-rightSlide);
-                b_right.setPower(rightSlide);
-            }
-            if (gamepad1.left_trigger > 0.1) {
-                double leftSlide = (gamepad1.left_trigger * 0.7) + (speed / 20);
-                f_left.setPower(-leftSlide);
-                f_right.setPower(leftSlide);
-                b_left.setPower(leftSlide);
-                b_right.setPower(-leftSlide);
-            }
-
-            double leftPower = -gamepad1.left_stick_y * (speed / 10);
-            double rightPower = -gamepad1.right_stick_y * (speed / 10);
-
-            f_left.setPower(leftPower);
-            f_right.setPower(rightPower);
-            b_left.setPower(leftPower);
-            b_right.setPower(rightPower);
-
-            if (gamepad1.dpad_up) {
-                if (speed < 10) {
-                    speed = speed + 1;
-                    sleep(100);
-                }
-            }
-            if (gamepad1.dpad_down) {
-                if (speed > 0) {
-                    speed = speed - 1;
-
-                }
-            }*/
-
-            /*double r = Math.hypot(gamepad1.left_stick_x, -gamepad1.left_stick_y);
-            double robotAngle = Math.atan2(-gamepad1.left_stick_y, gamepad1.left_stick_x) - Math.PI / 4;
-            double rightX = gamepad1.right_stick_x;
-            final double v1 = r * Math.cos(robotAngle) + rightX;
-            final double v2 = r * Math.sin(robotAngle) - rightX;
-            final double v3 = r * Math.sin(robotAngle) + rightX;
-            final double v4 = r * Math.cos(robotAngle) - rightX;
-
-            f_left.setPower(v1);
-            f_right.setPower(v2);
-            b_left.setPower(v3);
-            b_right.setPower(v4);*/
 
             double y = -gamepad1.left_stick_y; // Remember, this is reversed!
             double x = gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
@@ -142,7 +93,7 @@ public class Black_Team_Mechanum extends LinearOpMode {
                 armMotor.setPower(0);
             }
 
-            
+
             if (gamepad2.x) {
                 servo.setPosition(1);
 
@@ -152,26 +103,7 @@ public class Black_Team_Mechanum extends LinearOpMode {
                 servo.setPosition(0);
 
             }
-             /*if (gamepad2.x) {
-                servoRight.setPosition(0.25);
-                servoLeft.setPosition(0.5);
-            }
-            //don't use y and x button (may break servos)
-            if (gamepad2.y) {
-                servoRight.setPosition(0);
-                servoLeft.setPosition(0.75);
-            }
 
-            /*
-            if( gamepad2.x){
-                servoSetting = servoSetting + .01;
-            }
-            else if( gamepad2.y){
-                servoSetting-= .01;
-            }
-
-            servoLeft.setPosition(servoSetting);
-            servoRight.setPosition(servoSetting);*/
 
 
             telemetry.addData("Status", "Running");
