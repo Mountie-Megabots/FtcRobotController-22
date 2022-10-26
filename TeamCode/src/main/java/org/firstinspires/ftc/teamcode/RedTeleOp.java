@@ -16,14 +16,14 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 @TeleOp
-public class BlackTeleOp extends LinearOpMode {
+public class RedTeleOp extends LinearOpMode {
     private Blinker control_Hub;
-    private DcMotor b_left;
-    private DcMotor b_right;
-    private DcMotor f_left;
-    private DcMotor f_right;
+    private DcMotor leftBackDrive;
+    private DcMotor rightBackDrive;
+    private DcMotor frontLeftDrive;
+    private DcMotor frontRightDrive;
     private DcMotor armMotor;
-    private Servo servo;
+    private Servo ToucanSam;
     private BNO055IMU imu;
     double servoSetting = 0;
     double headingOffset = 0;
@@ -31,12 +31,12 @@ public class BlackTeleOp extends LinearOpMode {
     @Override
     public void runOpMode() {
         control_Hub = hardwareMap.get(Blinker.class, "Control Hub");
-        b_left = hardwareMap.get(DcMotor.class, "b_left");
-        b_right = hardwareMap.get(DcMotor.class, "b_right");
-        f_left = hardwareMap.get(DcMotor.class, "f_left");
-        f_right = hardwareMap.get(DcMotor.class, "f_right");
+        leftBackDrive = hardwareMap.get(DcMotor.class, "b_left");
+        rightBackDrive = hardwareMap.get(DcMotor.class, "b_right");
+        frontLeftDrive = hardwareMap.get(DcMotor.class, "f_left");
+        frontRightDrive = hardwareMap.get(DcMotor.class, "f_right");
         armMotor = hardwareMap.get(DcMotor.class, "armMotor");
-        servo = hardwareMap.get(Servo.class, "servo");
+        ToucanSam = hardwareMap.get(Servo.class, "servo");
         imu = hardwareMap.get(BNO055IMU.class, "imu");
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -46,10 +46,10 @@ public class BlackTeleOp extends LinearOpMode {
         parameters.loggingEnabled = false;
         imu.initialize(parameters);
 
-        b_left.setDirection(DcMotor.Direction.FORWARD);
-        b_right.setDirection(DcMotor.Direction.REVERSE);
-        f_left.setDirection(DcMotor.Direction.FORWARD);
-        f_right.setDirection(DcMotor.Direction.REVERSE);
+        leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
+        rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
+        frontLeftDrive.setDirection(DcMotor.Direction.FORWARD);
+        frontRightDrive.setDirection(DcMotor.Direction.REVERSE);
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -75,7 +75,7 @@ public class BlackTeleOp extends LinearOpMode {
 
             armMotor.setPower(gamepad2.left_stick_y);
 
-            servo.setPosition(servoSetting);
+            ToucanSam.setPosition(servoSetting);
             telemetry.addData("Status", "Running");
             telemetry.addData("Servo-Status",  servoSetting);
             telemetry.addData("Gyro", getHeading());
@@ -113,10 +113,10 @@ public class BlackTeleOp extends LinearOpMode {
         double frontRightPower = (rotY - rotX - rx) / denominator;
         double backRightPower = (rotY + rotX - rx) / denominator;
 
-        f_left.setPower(frontLeftPower);
-        b_left.setPower(backLeftPower);
-        f_right.setPower(frontRightPower);
-        b_right.setPower(backRightPower);
+        frontLeftDrive.setPower(frontLeftPower);
+        leftBackDrive.setPower(backLeftPower);
+        frontRightDrive.setPower(frontRightPower);
+        rightBackDrive.setPower(backRightPower);
     }
 
     public double getHeading() {
