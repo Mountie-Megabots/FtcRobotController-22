@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.Blinker;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -25,6 +26,7 @@ public class RedTeleOp extends LinearOpMode {
     private DcMotor armMotor;
     private Servo ToucanSam;
     private BNO055IMU imu;
+    private DigitalChannel limitSwitch;
     double servoSetting = 0;
     double headingOffset = 0;
 
@@ -33,11 +35,12 @@ public class RedTeleOp extends LinearOpMode {
         control_Hub = hardwareMap.get(Blinker.class, "Control Hub");
         leftBackDrive = hardwareMap.get(DcMotor.class, "leftBackDrive");
         rightBackDrive = hardwareMap.get(DcMotor.class, "rightBackDrive");
-        frontLeftDrive = hardwareMap.get(DcMotor.class, "frontLeftDrive");
-        frontRightDrive = hardwareMap.get(DcMotor.class, "frontRightDrive");
+        frontLeftDrive = hardwareMap.get(DcMotor.class, "leftFrontDrive");
+        frontRightDrive = hardwareMap.get(DcMotor.class, "rightFrontDrive");
         armMotor = hardwareMap.get(DcMotor.class, "armMotor");
         ToucanSam = hardwareMap.get(Servo.class, "ToucanSam");
         imu = hardwareMap.get(BNO055IMU.class, "imu");
+        limitSwitch = hardwareMap.get(DigitalChannel.class, "limitSwitch");
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.mode = BNO055IMU.SensorMode.IMU;
@@ -73,7 +76,13 @@ public class RedTeleOp extends LinearOpMode {
                 servoSetting = 0;
             }
 
-            armMotor.setPower(gamepad2.left_stick_y);
+            if(limitSwitch.getState() && gamepad2.left_stick_y < 0){
+                armMotor.setPower(0);
+            }
+            else{
+                armMotor.setPower(gamepad2.left_stick_y);
+            }
+
 
             ToucanSam.setPosition(servoSetting);
             telemetry.addData("Status", "Running");
