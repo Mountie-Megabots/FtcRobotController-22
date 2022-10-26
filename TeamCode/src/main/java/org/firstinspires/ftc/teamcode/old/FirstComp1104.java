@@ -40,7 +40,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * or add a @Disabled annotation to prevent this OpMode from being added to the Driver Station
  */
 @TeleOp
-
+@Disabled
 public class FirstComp1104 extends LinearOpMode {
     private Blinker control_Hub;
     private Blinker expansion_Hub_1;

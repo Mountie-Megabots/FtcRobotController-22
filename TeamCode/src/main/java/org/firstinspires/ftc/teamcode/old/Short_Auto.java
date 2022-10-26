@@ -41,7 +41,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * or add a @Disabled annotation to prevent this OpMode from being added to the Driver Station
  */
 @Autonomous
-
+@Disabled
 public class Short_Auto extends LinearOpMode {
     private Blinker control_Hub;
     private Blinker expansion_Hub_1;
