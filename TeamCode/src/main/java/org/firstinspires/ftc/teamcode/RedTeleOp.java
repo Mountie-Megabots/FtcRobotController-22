@@ -31,10 +31,10 @@ public class RedTeleOp extends LinearOpMode {
     @Override
     public void runOpMode() {
         control_Hub = hardwareMap.get(Blinker.class, "Control Hub");
-        leftBackDrive = hardwareMap.get(DcMotor.class, "b_left");
-        rightBackDrive = hardwareMap.get(DcMotor.class, "b_right");
-        frontLeftDrive = hardwareMap.get(DcMotor.class, "f_left");
-        frontRightDrive = hardwareMap.get(DcMotor.class, "f_right");
+        leftBackDrive = hardwareMap.get(DcMotor.class, "leftBackDrive");
+        rightBackDrive = hardwareMap.get(DcMotor.class, "rightBackDrive");
+        frontLeftDrive = hardwareMap.get(DcMotor.class, "frontleftDrive");
+        frontRightDrive = hardwareMap.get(DcMotor.class, "frontRightDrive");
         armMotor = hardwareMap.get(DcMotor.class, "armMotor");
         ToucanSam = hardwareMap.get(Servo.class, "servo");
         imu = hardwareMap.get(BNO055IMU.class, "imu");
