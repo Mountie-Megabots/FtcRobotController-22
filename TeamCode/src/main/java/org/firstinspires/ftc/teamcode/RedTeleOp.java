@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import android.graphics.RenderNode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Blinker;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -27,6 +28,7 @@ public class RedTeleOp extends LinearOpMode {
     private Servo ToucanSam;
     private BNO055IMU imu;
     private DigitalChannel limitSwitch;
+
     double servoSetting = 0;
     double headingOffset = 0;
 
@@ -41,6 +43,7 @@ public class RedTeleOp extends LinearOpMode {
         ToucanSam = hardwareMap.get(Servo.class, "ToucanSam");
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         limitSwitch = hardwareMap.get(DigitalChannel.class, "limitSwitch");
+        limitSwitch.setMode(DigitalChannel.Mode.INPUT);
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.mode = BNO055IMU.SensorMode.IMU;
@@ -83,8 +86,8 @@ public class RedTeleOp extends LinearOpMode {
                 armMotor.setPower(gamepad2.left_stick_y);
             }
 
-
             ToucanSam.setPosition(servoSetting);
+            telemetry.addData("Limit Switch", limitSwitch.getState());
             telemetry.addData("Status", "Running");
             telemetry.addData("Servo-Status",  servoSetting);
             telemetry.addData("Gyro", getHeading());
