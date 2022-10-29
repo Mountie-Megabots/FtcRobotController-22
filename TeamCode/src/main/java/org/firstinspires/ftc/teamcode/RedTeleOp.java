@@ -79,7 +79,7 @@ public class RedTeleOp extends LinearOpMode {
                 servoSetting = 0;
             }
 
-            if(limitSwitch.getState() && gamepad2.left_stick_y < 0){
+            if( !(limitSwitch.getState()) && gamepad2.left_stick_y > 0){
                 armMotor.setPower(0);
             }
             else{
