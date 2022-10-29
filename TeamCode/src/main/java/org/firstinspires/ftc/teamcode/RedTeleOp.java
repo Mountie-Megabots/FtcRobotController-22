@@ -28,6 +28,7 @@ public class RedTeleOp extends LinearOpMode {
     private Servo ToucanSam;
     private BNO055IMU imu;
     private DigitalChannel limitSwitch;
+    private int armOffset = 0;
 
     double servoSetting = 0;
     double headingOffset = 0;
@@ -44,6 +45,8 @@ public class RedTeleOp extends LinearOpMode {
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         limitSwitch = hardwareMap.get(DigitalChannel.class, "limitSwitch");
         limitSwitch.setMode(DigitalChannel.Mode.INPUT);
+
+        armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.mode = BNO055IMU.SensorMode.IMU;
@@ -80,6 +83,7 @@ public class RedTeleOp extends LinearOpMode {
             }
 
             if( !(limitSwitch.getState()) && gamepad2.left_stick_y > 0){
+                resetArmPosition();
                 armMotor.setPower(0);
             }
             else{
@@ -91,6 +95,7 @@ public class RedTeleOp extends LinearOpMode {
             telemetry.addData("Status", "Running");
             telemetry.addData("Servo-Status",  servoSetting);
             telemetry.addData("Gyro", getHeading());
+            telemetry.addData("Arm-Pos", getArmPosition())
             telemetry.update();
         }
     }
@@ -135,5 +140,17 @@ public class RedTeleOp extends LinearOpMode {
         Orientation angles =  imu.getAngularOrientation(AxesReference.INTRINSIC,
                 AxesOrder.ZYX, AngleUnit.DEGREES);
         return -angles.firstAngle-headingOffset;
+    }
+
+    public void resetArmPosition(){
+       armOffset = armMotor.getCurrentPosition();
+
+    }
+
+    public int getArmPosition(){
+        int armPosition = 0;
+
+        armPosition = armMotor.getCurrentPosition() - armOffset;
+        return armPosition;
     }
 }
