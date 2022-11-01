@@ -82,11 +82,27 @@ public class RedTeleOp extends LinearOpMode {
                 servoSetting = 0;
             }
 
-            if( !(limitSwitch.getState()) && gamepad2.left_stick_y > 0){
+
+
+            if ( !(limitSwitch.getState())){
                 resetArmPosition();
+            }
+
+            if ( !(limitSwitch.getState())&& gamepad2.left_stick_y > 0){
                 armMotor.setPower(0);
             }
+            else if (gamepad2.a) {
+                armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                armMotor.setPower(.5);
+                armMotor.setTargetPosition(-4000);
+            }
+            else if (gamepad2.b) {
+                armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                armMotor.setPower(.5);
+                armMotor.setTargetPosition(-8000);
+            }
             else{
+                armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 armMotor.setPower(gamepad2.left_stick_y);
             }
 
@@ -95,7 +111,7 @@ public class RedTeleOp extends LinearOpMode {
             telemetry.addData("Status", "Running");
             telemetry.addData("Servo-Status",  servoSetting);
             telemetry.addData("Gyro", getHeading());
-            telemetry.addData("Arm-Pos", getArmPosition())
+            telemetry.addData("Arm-Pos", getArmPosition());
             telemetry.update();
         }
     }
@@ -143,7 +159,8 @@ public class RedTeleOp extends LinearOpMode {
     }
 
     public void resetArmPosition(){
-       armOffset = armMotor.getCurrentPosition();
+        armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        armOffset = armMotor.getCurrentPosition();
 
     }
 
