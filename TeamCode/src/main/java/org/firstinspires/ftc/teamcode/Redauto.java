@@ -58,52 +58,24 @@ public class Redauto extends LinearOpMode {
         telemetry.update();
         waitForStart();
 
-        while (opModeIsActive()) {
-            /*
-            // Step 1:  Drive forward for 3 seconds
-            drive(1, 0, 0, false);
-            runtime.reset();
-            while (opModeIsActive() && (runtime.seconds() < 3.0)) {
-                telemetry.addData("Path", "Leg 1: %4.1f S Elapsed", runtime.seconds());
-                telemetry.update();
-            }
-
-            // Step 2:  Spin right for 1.3 seconds
-            drive(0, 0, -1, false);
-            runtime.reset();
-            while (opModeIsActive() && (runtime.seconds() < 1.3)) {
-                telemetry.addData("Path", "Leg 2: %4.1f S Elapsed", runtime.seconds());
-                telemetry.update();
-            }
-
-            // Step 3:  Drive Backward for 1 Second
-            drive(-1, 0, 0, false);
-            runtime.reset();
-            while (opModeIsActive() && (runtime.seconds() < 1.0)) {
-                telemetry.addData("Path", "Leg 3: %4.1f S Elapsed", runtime.seconds());
-                telemetry.update();
-            }
-            */
-
-            // Step 1:  Drive left for 3 seconds
-            drive(0, -1, 0, false);
-            runtime.reset();
-            while (opModeIsActive() && (runtime.seconds() < 3.0)) {
-                telemetry.addData("Path", "Leg 1: %4.1f S Elapsed", runtime.seconds());
-                telemetry.update();
-            }
-
-            // Step 4:  Stop
-            drive(0, 0, 0, false);
-
-            telemetry.addData("Path", "Complete");
-            telemetry.update();
-
-            telemetry.addData("Status", "Running");
-            telemetry.addData("Servo-Status", servoSetting);
-            telemetry.addData("Gyro", getHeading());
+        // Step 1:  Drive left for 3 seconds
+        drive(0, -1, 0, false);
+        runtime.reset();
+        while (opModeIsActive() && (runtime.seconds() < 3.0)) {
+            telemetry.addData("Path", "Leg 1: %4.1f S Elapsed", runtime.seconds());
             telemetry.update();
         }
+
+        // Step 4:  Stop
+        drive(0, 0, 0, false);
+
+        telemetry.addData("Path", "Complete");
+        telemetry.update();
+
+        telemetry.addData("Status", "Running");
+        telemetry.addData("Servo-Status", servoSetting);
+        telemetry.addData("Gyro", getHeading());
+        telemetry.update();
     }
 
     public void drive(double y, double x, double rx, boolean fieldRelative) {
