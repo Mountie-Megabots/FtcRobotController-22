@@ -41,7 +41,7 @@ public class RedTeleOp extends LinearOpMode {
         frontLeftDrive = hardwareMap.get(DcMotor.class, "leftFrontDrive");
         frontRightDrive = hardwareMap.get(DcMotor.class, "rightFrontDrive");
         armMotor = hardwareMap.get(DcMotor.class, "armMotor");
-        ToucanSam = hardwareMap.get(Servo.class, "ToucanSam");
+        ToucanSam = hardwareMap.get(Servo.class, "servo");
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         limitSwitch = hardwareMap.get(DigitalChannel.class, "limitSwitch");
         limitSwitch.setMode(DigitalChannel.Mode.INPUT);

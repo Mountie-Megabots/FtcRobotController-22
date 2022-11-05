@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.NWRobot;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.Blinker;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -36,7 +37,7 @@ public class RobotBase {
         frontLeftDrive = hardwareMap.get(DcMotor.class, "leftFrontDrive");
         frontRightDrive = hardwareMap.get(DcMotor.class, "rightFrontDrive");
         armMotor = hardwareMap.get(DcMotor.class, "armMotor");
-        barb = hardwareMap.get(Servo.class, "ToucanSam");
+        barb = hardwareMap.get(Servo.class, "servo");
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         limitSwitch = hardwareMap.get(DigitalChannel.class, "limitSwitch");
         limitSwitch.setMode(DigitalChannel.Mode.INPUT);
@@ -51,8 +52,8 @@ public class RobotBase {
         imu.initialize(parameters);
 
         leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
-        rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
-        frontLeftDrive.setDirection(DcMotor.Direction.FORWARD);
+        rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
+        frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
         frontRightDrive.setDirection(DcMotor.Direction.REVERSE);
     }
 
