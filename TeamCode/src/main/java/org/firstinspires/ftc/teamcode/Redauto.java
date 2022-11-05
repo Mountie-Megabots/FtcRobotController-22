@@ -58,10 +58,10 @@ public class Redauto extends LinearOpMode {
         telemetry.update();
         waitForStart();
 
-        // Step 1:  Drive left for 3 seconds
-        drive(0, -1, 0, false);
+        // Step 1:  Drive left for 1.25 seconds
+        zdrive(0, -1, 0, false);
         runtime.reset();
-        while (opModeIsActive() && (runtime.seconds() < 3.0)) {
+        while (opModeIsActive() && (runtime.seconds() < 1.25)) {
             telemetry.addData("Path", "Leg 1: %4.1f S Elapsed", runtime.seconds());
             telemetry.update();
         }
