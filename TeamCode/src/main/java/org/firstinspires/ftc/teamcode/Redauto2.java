@@ -18,8 +18,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.NWRobot.RobotBase;
 
-@Autonomous(name = "AutoLeft")
-public class Redauto extends LinearOpMode {
+@Autonomous(name = "AutoRight")
+public class Redauto2 extends LinearOpMode {
     private RobotBase bot;
     private ElapsedTime runtime = new ElapsedTime();
 
@@ -32,7 +32,7 @@ public class Redauto extends LinearOpMode {
         waitForStart();
 
         // Step 1:  Drive left for 3 seconds
-        bot.drive (0, -1, 0, false);
+        bot.drive (0, 1, 0, false);
         runtime.reset();
         while (opModeIsActive() && (runtime.seconds() < 1.25)) {
             telemetry.addData("Path", "Leg 1: %4.1f S Elapsed", runtime.seconds());
