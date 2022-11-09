@@ -67,6 +67,7 @@ public class RobotBase {
         frontRightDrive.setDirection(DcMotor.Direction.REVERSE);
 
         odometry = new Odometry(this);
+        odometry.initialize(opMode);
     }
 
     public void enabledPeriodic(){
@@ -133,12 +134,13 @@ public class RobotBase {
     }
 
     public void moveArmToPosition(int position){
+        armMotor.setTargetPosition(position);
+
         if(armMotor.getMode() != DcMotor.RunMode.RUN_TO_POSITION){
             armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
 
         armMotor.setPower(.5);
-        armMotor.setTargetPosition(position);
     }
 
     public void resetArmPosition(){
