@@ -30,7 +30,7 @@ public class AprilTagAuto extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        base = new RobotBase(hardwareMap);
+        base = new RobotBase(this);
         detector = new AprilTagDetector(hardwareMap);
 
         waitForStart();

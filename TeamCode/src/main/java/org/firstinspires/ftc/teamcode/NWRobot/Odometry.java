@@ -6,10 +6,8 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.normalizeDegrees;
 
-public class Odometry extends Subsystem{
-    public DcMotorEx xEncoder;
-    public DcMotorEx yEncoder;
-    public BNO055IMU imu;
+public class Odometry {
+    public RobotBase bot;
     public Vector2D position; // this has to be inches
     public double heading = 0;
     double startHeading = 0;
@@ -21,15 +19,15 @@ public class Odometry extends Subsystem{
 
     public int xEncoderPrevious = 0;
     public int yEncoderPrevious = 0;
-    public int IMUPrevious = 0;
+    public double IMUPrevious = 0;
     public int xEncoderCounts=0;
     public int yEncoderCounts=0;
 
     public int deltaXEncoder;
-    public int deltarYEncoder;
+    public int deltaYEncoder;
     public double deltaHeading;
-    public double deltax;
-    public double deltay;
+    public double deltaX;
+    public double deltaY;
 
     public double headingCorrection=0;
 
@@ -39,12 +37,10 @@ public class Odometry extends Subsystem{
     Vector2D fieldCentricDelta;
     Vector2D robotCentricDelta;
 
-    Odometry(DcMotorEx lEncoder, DcMotorEx rEncoder, BNO055IMU imu){
-        this.xEncoder=lEncoder;
-        this.yEncoder=rEncoder;
-
+    Odometry(RobotBase robot){
+        this.bot = robot;
     }
-    @Override
+
     public void initialize(LinearOpMode opMode) {
 
         resetAllEncoders();
@@ -60,61 +56,56 @@ public class Odometry extends Subsystem{
     }
 
     public void resetAllEncoders(){
-        lEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        xEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        bEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        bot.xEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        bot.yEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //bEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
     public void waitAllEncoders(){
-        while(lEncoder.isBusy() || rEncoder.isBusy() || bEncoder.isBusy()){
+        while(bot.xEncoder.isBusy() || bot.yEncoder.isBusy()){
         }
     }
     public void setAllRunWithoutEncoders(){
-        lEncoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rEncoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        bEncoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        bot.xEncoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        bot.yEncoder.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     //lrb
     public void updateEncoders(){
-
-        lEncoderCounts = Agobot.getCurrentMotorPos(lEncoder);
-        rEncoderCounts = Agobot.getCurrentMotorPos(rEncoder);
-        bEncoderCounts = Agobot.getCurrentMotorPos(bEncoder);
+        xEncoderCounts = bot.getCurrentMotorPos(bot.xEncoder);
+        yEncoderCounts = bot.getCurrentMotorPos(bot.yEncoder);
+        //bEncoderCounts = Agobot.getCurrentMotorPos(bEncoder);
     }
 
-    public int getlEncoderCounts() {
-        return lEncoderCounts*lEncoderDirection;
+    public int getxEncoderCounts() {
+        return xEncoderCounts*xEncoderDirection;
     }
 
-    public int getrEncoderCounts() {
-        return rEncoderCounts*rEncoderDirection;
+    public int getyEncoderCounts() {
+        return yEncoderCounts*yEncoderDirection;
     }
 
-    public int getbEncoderCounts() {
-        return bEncoderCounts*bEncoderDirection;
+    public double getHeading() {
+        return Math.toRadians(bot.getHeading())*IMUDirection;
     }
+
 
     public void updatePosition(){
         updateEncoders();
 
-        deltalEncoder =  getlEncoderCounts() - lEncoderPrevious;
-        deltarEncoder = getrEncoderCounts() - rEncoderPrevious;
-        deltabEncoder = getbEncoderCounts() - bEncoderPrevious;
+        deltaXEncoder =  getxEncoderCounts() - xEncoderPrevious;
+        deltaYEncoder = getyEncoderCounts() - yEncoderPrevious;
+        deltaHeading = getHeading() - IMUPrevious;
 
-        lEncoderPrevious = getlEncoderCounts();
-        rEncoderPrevious = getrEncoderCounts();
-        bEncoderPrevious = getbEncoderCounts();
+        xEncoderPrevious = getxEncoderCounts();
+        yEncoderPrevious = getyEncoderCounts();
+        IMUPrevious = getHeading();
+        //bEncoderPrevious = getbEncoderCounts();
 
-        deltaHeading = (deltarEncoder - deltalEncoder)/(2.0*RADIUS*ENCODER_COUNTS_PER_INCH); //it's in radians
-        heading = /*normalizeRadians(heading + deltaHeading);*/ normalizeRadians((getrEncoderCounts()-getlEncoderCounts())/(2.0*RADIUS*ENCODER_COUNTS_PER_INCH) + startHeading+headingCorrection);
+        heading = /*normalizeRadians(heading + deltaHeading);*/ normalizeRadians(IMUPrevious + startHeading+headingCorrection);
 
-//        deltaHorizontal = deltabEncoder - (deltaHeading*BENCODER_OFFSET); //takes away the bEncoder counts that were a result of turning
-//
-//        deltay = (deltarEncoder + deltalEncoder)/2; //robot centric y and x
-//        deltax = deltaHorizontal;
 
-        if(deltaHeading == 0){ //have to do it like this because java doesn't do l'Hopital's rule
-            deltax = deltabEncoder;
+        /*if(deltaHeading == 0){ //have to do it like this because java doesn't do l'Hopital's rule
+            deltaX = deltabEncoder;
             deltay = (deltalEncoder + deltarEncoder)/2;
         }else{
             double turnRadius = RADIUS*ENCODER_COUNTS_PER_INCH*(deltalEncoder + deltarEncoder)/(deltarEncoder - deltalEncoder);
@@ -122,12 +113,25 @@ public class Odometry extends Subsystem{
 
             deltax = turnRadius*(Math.cos(deltaHeading) - 1) + strafeRadius*Math.sin(deltaHeading);
             deltay = turnRadius*Math.sin(deltaHeading) + strafeRadius*(1 - Math.cos(deltaHeading));
+        }*/
+
+        double straightDistance = ENCODER_COUNTS_PER_INCH*deltaXEncoder;
+        double strafeDistance = ENCODER_COUNTS_PER_INCH*deltaYEncoder;
+
+        if(deltaHeading == 0){
+            deltaX = straightDistance;
+            deltaY = strafeDistance;
+        } else{
+            deltaX = straightDistance*Math.cos(heading);
+            deltaY = strafeDistance*Math.sin(heading);
+
         }
 
-        robotCentricDelta = new Vector2D(encoderToInch(deltax), encoderToInch(deltay));
 
-        fieldCentricDelta = new Vector2D(encoderToInch(deltay), encoderToInch(-deltax));
-        fieldCentricDelta.rotate(heading);
+        //robotCentricDelta = new Vector2D(encoderToInch(deltax), encoderToInch(deltay));
+
+        //fieldCentricDelta = new Vector2D(encoderToInch(deltay), encoderToInch(-deltax));
+        fieldCentricDelta = new Vector2D(deltaY, -deltaX);
         position.add(fieldCentricDelta);
     }
 

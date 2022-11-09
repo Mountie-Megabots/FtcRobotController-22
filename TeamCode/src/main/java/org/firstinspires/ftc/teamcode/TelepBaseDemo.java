@@ -9,7 +9,7 @@ public class TelepBaseDemo extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        RobotBase base = new RobotBase(hardwareMap);
+        RobotBase base = new RobotBase(this);
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();

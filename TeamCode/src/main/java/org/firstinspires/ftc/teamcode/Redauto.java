@@ -25,7 +25,7 @@ public class Redauto extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        bot = new RobotBase(hardwareMap);
+        bot = new RobotBase(this);
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();

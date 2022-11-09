@@ -1,8 +1,10 @@
 package org.firstinspires.ftc.teamcode.NWRobot;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Blinker;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -24,22 +26,30 @@ public class RobotBase {
     private Servo barb;
     private BNO055IMU imu;
     private DigitalChannel limitSwitch;
+    public DcMotorEx xEncoder;
+    public DcMotorEx yEncoder;
+    public Vector2D position; // this has to be inches
+    public LinearOpMode opMode;
+    public Odometry odometry;
 
     private int armOffset = 0;
 
     double servoSetting = 0;
     double headingOffset = 0;
 
-    public RobotBase(HardwareMap hardwareMap){
-        control_Hub = hardwareMap.get(Blinker.class, "Control Hub");
-        leftBackDrive = hardwareMap.get(DcMotor.class, "leftBackDrive");
-        rightBackDrive = hardwareMap.get(DcMotor.class, "rightBackDrive");
-        frontLeftDrive = hardwareMap.get(DcMotor.class, "leftFrontDrive");
-        frontRightDrive = hardwareMap.get(DcMotor.class, "rightFrontDrive");
-        armMotor = hardwareMap.get(DcMotor.class, "armMotor");
-        barb = hardwareMap.get(Servo.class, "servo");
-        imu = hardwareMap.get(BNO055IMU.class, "imu");
-        limitSwitch = hardwareMap.get(DigitalChannel.class, "limitSwitch");
+    public RobotBase(LinearOpMode opmode){
+        this.opMode = opmode;
+        control_Hub = opMode.hardwareMap.get(Blinker.class, "Control Hub");
+        leftBackDrive = opMode.hardwareMap.get(DcMotor.class, "leftBackDrive");
+        rightBackDrive = opMode.hardwareMap.get(DcMotor.class, "rightBackDrive");
+        frontLeftDrive = opMode.hardwareMap.get(DcMotor.class, "leftFrontDrive");
+        frontRightDrive = opMode.hardwareMap.get(DcMotor.class, "rightFrontDrive");
+        armMotor = opMode.hardwareMap.get(DcMotor.class, "armMotor");
+        barb = opMode.hardwareMap.get(Servo.class, "servo");
+        imu = opMode.hardwareMap.get(BNO055IMU.class, "imu");
+        limitSwitch = opMode.hardwareMap.get(DigitalChannel.class, "limitSwitch");
+        xEncoder = opMode.hardwareMap.get(DcMotorEx.class, "xEncoder");
+        yEncoder = opMode.hardwareMap.get(DcMotorEx.class, "yEncoder");
         limitSwitch.setMode(DigitalChannel.Mode.INPUT);
 
         armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -55,6 +65,8 @@ public class RobotBase {
         rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
         frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
         frontRightDrive.setDirection(DcMotor.Direction.REVERSE);
+
+        odometry = new Odometry(this);
     }
 
     public void enabledPeriodic(){
@@ -151,5 +163,9 @@ public class RobotBase {
 
     public boolean getLimitSwitch(){
         return limitSwitch.getState();
+    }
+
+    public int getCurrentMotorPos(DcMotor motor){
+        return motor.getCurrentPosition();
     }
 }

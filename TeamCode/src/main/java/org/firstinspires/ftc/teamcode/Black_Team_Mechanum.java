@@ -3,7 +3,9 @@ package org.firstinspires.ftc.teamcode;
 import android.graphics.RenderNode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.Blinker;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -15,6 +17,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
+@Disabled
 @TeleOp
 public class Black_Team_Mechanum extends LinearOpMode {
     private Blinker control_Hub;
@@ -27,6 +30,8 @@ public class Black_Team_Mechanum extends LinearOpMode {
     private BNO055IMU imu;
     double speed = 10;
     double servoSetting = .5;
+    private AnalogInput ai1;
+
 
     @Override
     public void runOpMode() {

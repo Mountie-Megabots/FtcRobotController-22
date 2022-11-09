@@ -13,7 +13,7 @@ public class AutoBaseDemo extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        base = new RobotBase(hardwareMap);
+        base = new RobotBase(this);
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
