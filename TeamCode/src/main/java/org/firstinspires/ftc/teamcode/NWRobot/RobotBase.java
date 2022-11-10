@@ -75,6 +75,8 @@ public class RobotBase {
         if ( !(limitSwitch.getState())){
             resetArmPosition();
         }
+
+        odometry.updatePosition();
     }
 
     public void drive(double y, double x, double rx, boolean fieldRelative){

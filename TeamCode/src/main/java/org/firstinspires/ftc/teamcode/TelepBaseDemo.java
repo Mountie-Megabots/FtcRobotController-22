@@ -22,6 +22,9 @@ public class TelepBaseDemo extends LinearOpMode {
 
             base.enabledPeriodic();
 
+            double Xodommetry = base.odometry.currentPosition().getComponents()[0];
+            double Xodommetry = base.odometry.currentPosition().getComponents()[1];
+
             base.drive(y, x, rx, false);
 
             if(gamepad1.a){
@@ -49,6 +52,7 @@ public class TelepBaseDemo extends LinearOpMode {
             telemetry.addData("Limit Switch", base.getLimitSwitch());
             telemetry.addData("Gyro", base.getHeading());
             telemetry.addData("Arm-Pos", base.getArmPosition());
+            telemetry.addData("Field pos:", base.getArmPosition());
             telemetry.update();
         }
     }
