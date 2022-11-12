@@ -19,13 +19,20 @@ public class TelepBaseDemo extends LinearOpMode {
             double y = -gamepad1.left_stick_y; // Remember, this is reversed!
             double x = gamepad1.left_stick_x; // Counteracts imperfect strafing
             double rx = gamepad1.right_stick_x;
+            boolean rightBumper = gamepad1.right_bumper;
 
             base.enabledPeriodic();
 
             double Xodommetry = base.odometry.currentPosition().getComponents()[0];
             double Yodommetry = base.odometry.currentPosition().getComponents()[1];
 
-            base.drive(y, x, rx, false);
+            if(rightBumper){
+                base.drive(y, x, rx/4, false);
+            }
+            else{
+                base.drive(y, x, rx*.75, false);
+            }
+
 
             if(gamepad1.a){
                 base.resetHeading();

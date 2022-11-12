@@ -36,17 +36,11 @@ public class AprilTagAuto extends LinearOpMode {
         waitForStart();
 
         // Step 1:  Drive forward for 1 seconds
-        base.drive(1, 0, 0, false);
+        base.drive(.25, 0, 0, false);
         runtime.reset();
-        while (opModeIsActive() && (runtime.seconds() < 1.0)) {
+        while (opModeIsActive() && (base.odometry.currentPosition().getComponents()[0] < 34 || runtime.seconds() < 10)) {
             telemetry.addData("Path", "Leg 1: %4.1f S Elapsed", runtime.seconds());
-            telemetry.update();
-        }
 
-        // Step 2:  Stop and try to detect AprilTag
-        base.drive(0, 0, 0, false);
-        runtime.reset();
-        while (opModeIsActive() && (runtime.seconds() < 3.0) && parkingSpace == 0) {
             switch(detector.FindAprilTag()){
                 case 100:
                     parkingSpace = 1;
@@ -59,16 +53,30 @@ public class AprilTagAuto extends LinearOpMode {
                     break;
             }
 
-            telemetry.addData("Path", "Leg 2: %4.1f S Elapsed", runtime.seconds());
+            if(parkingSpace == 0){
+                telemetry.addData("Parking Space", "Not determined");
+            }
+            else{
+                telemetry.addData("Parking Space", "Targeting space %d", parkingSpace);
+            }
+
             telemetry.update();
         }
 
-        // Step 3:  Drive forward to line up with parking space
+        // Step 2:  Stop. Drive to different parking space if necessary.
         base.drive(1, 0, 0, false);
         runtime.reset();
-        while (opModeIsActive() && (runtime.seconds() < 1.0)) {
-            telemetry.addData("Path", "Leg 3: %4.1f S Elapsed", runtime.seconds());
-            telemetry.update();
+        if(parkingSpace == 1 || parkingSpace == 3) {
+            double targetPosition = 0;
+
+            if (parkingSpace == 1){
+                targetPosition = -10;
+            }
+
+            while (opModeIsActive() && (runtime.seconds() < 1.0)) {
+                telemetry.addData("Path", "Leg 3: %4.1f S Elapsed", runtime.seconds());
+                telemetry.update();
+            }
         }
 
         // Step 5:  Stop or drive to parking space.

@@ -115,15 +115,15 @@ public class Odometry {
             deltay = turnRadius*Math.sin(deltaHeading) + strafeRadius*(1 - Math.cos(deltaHeading));
         }*/
 
-        double straightDistance = ENCODER_COUNTS_PER_INCH*deltaXEncoder;
-        double strafeDistance = ENCODER_COUNTS_PER_INCH*deltaYEncoder;
+        double straightDistance = .96*deltaXEncoder/ENCODER_COUNTS_PER_INCH;
+        double strafeDistance = .96*deltaYEncoder/ENCODER_COUNTS_PER_INCH;
 
         if(deltaHeading == 0){
             deltaX = straightDistance;
             deltaY = strafeDistance;
         } else{
-            deltaX = straightDistance*Math.cos(heading);
-            deltaY = strafeDistance*Math.sin(heading);
+            deltaX = straightDistance*Math.cos(heading) + straightDistance*Math.sin(heading);
+            deltaY = strafeDistance*Math.cos(heading) + strafeDistance*Math.sin(heading);
 
         }
 
