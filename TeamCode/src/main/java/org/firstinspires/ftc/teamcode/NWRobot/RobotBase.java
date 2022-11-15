@@ -15,6 +15,11 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.Properties;
+
 
 public class RobotBase {
     private Blinker control_Hub;
@@ -31,6 +36,8 @@ public class RobotBase {
     public Vector2D position; // this has to be inches
     public LinearOpMode opMode;
     public Odometry odometry;
+    public Properties prop;
+    public Boolean isRedBot;
 
     private int armOffset = 0;
 
@@ -61,15 +68,40 @@ public class RobotBase {
         parameters.loggingEnabled = false;
         imu.initialize(parameters);
 
-        
+        prop = new Properties();
+        try (FileInputStream fis = new FileInputStream("/FIRST/data/robot.config")) {
+            prop.load(fis);
+        } catch (FileNotFoundException ex) {
+            opmode.telemetry.addData("Properties:", "File not found.");
+        } catch (IOException ex) {
+            opmode.telemetry.addData("Properties:", "IO Failed.");
+        }
 
-        leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
-        rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
-        frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
-        frontRightDrive.setDirection(DcMotor.Direction.REVERSE);
+        if(prop.getProperty("RobotName").toString().equals("Redbot")){
+            isRedBot = true;
+            opmode.telemetry.addData("Properties:", "This is Redbot");
+        }
+        else{
+            isRedBot = false;
+            opmode.telemetry.addData("Properties:", "This is Blackbot");
+        }
+
+        if(isRedBot){
+            leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
+            rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
+            frontLeftDrive.setDirection(DcMotor.Direction.FORWARD);
+            frontRightDrive.setDirection(DcMotor.Direction.REVERSE);
+        }
+        else{
+            leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
+            rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
+            frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
+            frontRightDrive.setDirection(DcMotor.Direction.REVERSE);
+        }
 
         odometry = new Odometry(this);
         odometry.initialize(opMode);
+
     }
 
     public void enabledPeriodic(){
@@ -174,4 +206,6 @@ public class RobotBase {
     public int getCurrentMotorPos(DcMotor motor){
         return motor.getCurrentPosition();
     }
+
+
 }
