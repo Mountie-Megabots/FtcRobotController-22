@@ -16,6 +16,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.internal.camera.names.BuiltinCameraNameImpl;
 
+@Disabled
 @TeleOp(name = "XDriveRed")
 public class HexDriveRed extends LinearOpMode{
     private DcMotor leftFrontDrive = null;

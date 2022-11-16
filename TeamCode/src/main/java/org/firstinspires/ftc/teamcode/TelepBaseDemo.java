@@ -4,15 +4,15 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.NWRobot.RobotBase;
 
-@TeleOp
+@TeleOp(name = "TeleOp Base")
 public class TelepBaseDemo extends LinearOpMode {
 
     @Override
     public void runOpMode() {
         RobotBase base = new RobotBase(this);
 
-        telemetry.addData("Status", "Initialized");
-        telemetry.update();
+        //telemetry.addData("Status", "Initialized");
+        //telemetry.update();
         waitForStart();
 
         while (opModeIsActive()) {
@@ -51,8 +51,11 @@ public class TelepBaseDemo extends LinearOpMode {
             else if (gamepad2.b) {
                 base.moveArmToPosition(-8000);
             }
-            else{
+            else if (Math.abs(gamepad2.left_stick_y) > 0.05){
                 base.manuallyMoveArm(gamepad2.left_stick_y);
+            }
+            else{
+                base.moveArmToPosition(base.stickToPosition(gamepad2.right_stick_y));
             }
 
             telemetry.addData("Status", "Running");
