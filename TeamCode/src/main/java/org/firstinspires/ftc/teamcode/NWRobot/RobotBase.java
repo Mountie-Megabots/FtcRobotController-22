@@ -50,7 +50,9 @@ public class RobotBase {
     public Odometry odometry;
     public Properties prop;
     public Boolean isRedBot = true;
-    public int maxArmPosition = -1000;
+    public int maxArmPosition = -5868;
+    public int armSetPosition = 0;
+    public boolean armMoving = false;
     public double lastRunTime;
     public Timing.Timer armTimer;
 
@@ -140,7 +142,9 @@ public class RobotBase {
 
         armTimer = new Timing.Timer(1000, TimeUnit.MILLISECONDS);
         odometry = new Odometry(this);
+        this.updateSensors();
         odometry.initialize(opMode);
+
 
     }
 
@@ -209,24 +213,20 @@ public class RobotBase {
 
         double maxRotationalCorrection = .5;
         double minRotationalCorrection = .05;
-        double headingDeadbandDegrees = 10;
+        double headingDeadbandDegrees = 1;
         double speedPerDegree = (maxRotationalCorrection-minRotationalCorrection)/(180-headingDeadbandDegrees/2);
 
         // Read inverse IMU heading, as the IMU heading is CW positive
         double botHeading = Math.toRadians(getHeading());
 
-        // if(fieldRelative){
         rotX = x * Math.cos(botHeading) - y * Math.sin(botHeading);
         rotY = x * Math.sin(botHeading) + y * Math.cos(botHeading);
-//
-//        }
-//        else{
-//            rotX = x;
-//            rotY = y;
-//        }
 
         headingError = this.angleDifference(getHeading(), heading);
-        if(Math.abs(headingError) > headingDeadbandDegrees){
+        if(headingError > headingDeadbandDegrees){
+            rx = -1*clamp( speedPerDegree*(headingError-headingDeadbandDegrees/2),minRotationalCorrection, maxRotationalCorrection);
+        }
+        else if(Math.abs(headingError) > headingDeadbandDegrees){
             rx = clamp( speedPerDegree*(headingError-headingDeadbandDegrees/2),minRotationalCorrection, maxRotationalCorrection);
         }
 
@@ -243,6 +243,55 @@ public class RobotBase {
         leftBackDrive.setPower(backLeftPower);
         frontRightDrive.setPower(frontRightPower);
         rightBackDrive.setPower(backRightPower);
+    }
+
+    public boolean driveToPosition(double x, double y, double heading, double maxSpeed, double minSpeed){
+        double speedX = 0;
+        double speedY = 0;
+        double speedR = 0;
+        double xError = odometry.getXPos()-x;
+        double yError = odometry.getYPos()-y;
+        double headingError = this.angleDifference(getHeading(), heading);
+
+        opMode.telemetry.addData("xPos",odometry.getXPos());
+        opMode.telemetry.addData("xPos",odometry.getYPos());
+        opMode.telemetry.addData("Heading",getHeading());
+        opMode.telemetry.addData("xError",xError);
+        opMode.telemetry.addData("yError",yError);
+        opMode.telemetry.addData("headingError",headingError);
+
+        double translationDeadband = 1;
+        double translationMinDistance = 6;
+        double translationMaxDistance = 24;
+        double translationSpeedPerInch = (maxSpeed)/(translationMaxDistance);
+
+        double maxRotationalCorrection = .5;
+        double minRotationalCorrection = .12;
+        double headingDeadbandDegrees = 1;
+        double speedPerDegree = (maxRotationalCorrection-minRotationalCorrection)/(90-headingDeadbandDegrees/2);
+
+        if(Math.abs(xError) > translationDeadband){
+            speedX = (xError/Math.abs(xError))*clamp((Math.abs(xError))*translationSpeedPerInch,minSpeed,maxSpeed);
+        }
+
+        if(Math.abs(yError) > translationDeadband){
+            speedY = (yError/Math.abs(yError))*clamp((Math.abs(yError))*translationSpeedPerInch,minSpeed,maxSpeed);
+        }
+
+        if(Math.abs(headingError) > headingDeadbandDegrees){
+            speedR = (headingError/Math.abs(headingError))*clamp( speedPerDegree*(Math.abs(headingError)-headingDeadbandDegrees/2),minRotationalCorrection, maxRotationalCorrection);
+        }
+
+        opMode.telemetry.addData("SpeedX",speedX);
+        opMode.telemetry.addData("SpeedY",speedY);
+        opMode.telemetry.addData("SpeedR",speedR);
+
+        drive(-speedX,-speedY, -speedR, true);
+
+        if( speedX == 0 && speedY == 0 && speedR == 0){
+            return true;
+        }
+        return false;
     }
 
     public double angleDifference(double a, double b){
@@ -263,6 +312,7 @@ public class RobotBase {
     }
 
     public void manuallyMoveArm(double speed){
+        armMoving = true;
         if(armMotor.getMode() != DcMotor.RunMode.RUN_USING_ENCODER){
             armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
@@ -279,21 +329,23 @@ public class RobotBase {
 
     }
 
+
     public void moveArmToPosition(int position){
         position = clamp(position, maxArmPosition, 8000);
+        armSetPosition = position;
         armMotor.setTargetPosition(position);
 
         if(armMotor.getMode() != DcMotor.RunMode.RUN_TO_POSITION){
             armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
 
-        armMotor.setPower(.5);
+        armMotor.setPower(1);
     }
 
     public int stickToPosition(double stick){
         int position = getArmPosition();
-        double timeToTopPosition = 5;
-        double countsPerSecond = (timeToTopPosition)/maxArmPosition;
+        double timeToTopPosition = .3;
+        double countsPerSecond = maxArmPosition/timeToTopPosition;
         double elapsedTime = opMode.getRuntime() - lastRunTime;
         lastRunTime = opMode.getRuntime();
         /*if(armTimer.isTimerOn()){
@@ -302,9 +354,9 @@ public class RobotBase {
 
         armTimer.*/
 
-        if(elapsedTime < 0.05){
-            position = (int) (position + elapsedTime*countsPerSecond);
-        }
+        //if(elapsedTime < 0.05){
+            position = (int)clamp(position + -stick*elapsedTime*countsPerSecond,maxArmPosition,0);
+        //}
 
         return position;
     }

@@ -21,7 +21,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.ArrayList;
 
-@Autonomous(name = "AprilTagAuto", group = "Concept")
+@Autonomous(name = "AprilTagAuto")
 public class AprilTagAuto extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
     RobotBase base;
@@ -42,15 +42,19 @@ public class AprilTagAuto extends LinearOpMode {
         base.resetHeading();
         while (opModeIsActive()) {
             base.enabledPeriodic();
+            telemetry.setAutoClear(true);
 
+            //Lift arm
             if(autoStage == 0){
-                base.driveWithHeading(.25, 0, 0);
-                if( base.odometry.currentPosition().getComponents()[0] < 34) {
-                    telemetry.addData("Path", "Leg 1: %4.1f S Elapsed", runtime.seconds());
-                    telemetry.addData("Heading", base.getHeading());
-                    telemetry.addData("X", base.odometry.currentPosition().getComponents()[0]);
-                    telemetry.addData("Y", base.odometry.currentPosition().getComponents()[1]);
-
+                base.moveArmToPosition(-1200);
+                if(base.getArmPosition() < -1000){
+                    runtime.reset();
+                    autoStage++;
+                }
+            }
+            //Start detecting AprilTags
+            if(autoStage == 1){
+                if(runtime.seconds() < 2){
                     switch (detector.FindAprilTag()) {
                         case 100:
                             parkingSpace = 1;
@@ -68,64 +72,88 @@ public class AprilTagAuto extends LinearOpMode {
                     } else {
                         telemetry.addData("Parking Space", "Targeting space %d", parkingSpace);
                     }
-
-                    telemetry.update();
                 }
                 else{
-                    base.driveWithHeading(0,0,0);
+                    runtime.reset();
+                    autoStage++;
+                }
+
+            }
+            //Drive Forward
+            if(autoStage == 2){
+                if( !base.driveToPosition(26,0,0,.5,.2)) {
+                    telemetry.addData("Path", "Leg 1: %4.1f S Elapsed", runtime.seconds());
+                    telemetry.addData("Heading", base.getHeading());
+                    telemetry.addData("X", base.odometry.currentPosition().getComponents()[0]);
+                    telemetry.addData("Y", base.odometry.currentPosition().getComponents()[1]);
+
+                    if(parkingSpace == 0) {
+                        switch (detector.FindAprilTag()) {
+                            case 100:
+                                parkingSpace = 1;
+                                break;
+                            case 200:
+                                parkingSpace = 2;
+                                break;
+                            case 300:
+                                parkingSpace = 3;
+                                break;
+                        }
+                        telemetry.addData("Parking Space", "Not determined");
+                    }
+                    else {
+                        telemetry.addData("Parking Space", "Targeting space %d", parkingSpace);
+                    }
+
+                }
+                else{
+                    base.drive(0,0,0, false);
                     runtime.reset();
                     if(parkingSpace == 1){
-                        autoStage=1;
+                        autoStage=3;
                     }
                     else if(parkingSpace == 3){
-                        autoStage=2;
+                        autoStage=4;
                     }
                     else{
-                        autoStage=3;
+                        autoStage=5;
                     }
                 }
             }
             //Parking Space 1
-            else if(autoStage == 1){
-                base.driveWithHeading(0, -.25, 0);
-                if( base.odometry.currentPosition().getComponents()[1] > - 12) {
-                    telemetry.addData("Path", "Leg 2: %4.1f S Elapsed", runtime.seconds());
+            else if(autoStage == 3){
+                if( !base.driveToPosition(26, -20, 0,.4,.2)) {
+                    telemetry.addData("Path", "Driving to Parking Space 1: %4.1f S Elapsed", runtime.seconds());
                     telemetry.addData("Heading", base.getHeading());
                     telemetry.addData("X", base.odometry.currentPosition().getComponents()[0]);
                     telemetry.addData("Y", base.odometry.currentPosition().getComponents()[1]);
                 }
                 else{
-                    base.driveWithHeading(0,0,0);
+                    base.drive(0,0,0, false);
                     runtime.reset();
-                    autoStage=3;
+                    autoStage=5;
                 }
             }
             //Parking Space 3
-            else if(autoStage == 2){
-                base.driveWithHeading(0, .25, 0);
-                if( base.odometry.currentPosition().getComponents()[1] > 12) {
-                    telemetry.addData("Path", "Leg 3: %4.1f S Elapsed", runtime.seconds());
+            else if(autoStage == 4){
+                if( !base.driveToPosition(26, 20, 0,.4,.2)) {
+                    telemetry.addData("Path", "Driving to Parking Space 3: %4.1f S Elapsed", runtime.seconds());
                     telemetry.addData("Heading", base.getHeading());
                     telemetry.addData("X", base.odometry.currentPosition().getComponents()[0]);
                     telemetry.addData("Y", base.odometry.currentPosition().getComponents()[1]);
                 }
                 else{
-                    base.driveWithHeading(0,0,0);
+                    base.drive(0,0,0, false);
                     runtime.reset();
-                    autoStage=3;
+                    autoStage=5;
                 }
             }
             //Done
-            else if(autoStage == 3){
-                base.driveWithHeading(0, .25, 0);
-                if( base.odometry.currentPosition().getComponents()[1] > 12) {
+            else if(autoStage == 5){
                     telemetry.addData("Path", "Reached Parking Space %d!",parkingSpace);
-                }
-                else{
+
                     base.drive(0,0,0,false);
                     runtime.reset();
-
-                }
             }
 
 

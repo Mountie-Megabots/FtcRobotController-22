@@ -1,12 +1,14 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.NWRobot.RobotBase;
 
 @Autonomous
+@Disabled
 public class AutoBaseDemo extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
     RobotBase base;

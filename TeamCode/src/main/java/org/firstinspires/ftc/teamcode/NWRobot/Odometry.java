@@ -176,4 +176,11 @@ public class Odometry {
         return angle;
     }
 
+    public double getXPos(){
+        return position.getComponent(0);
+    }
+
+    public double getYPos(){
+        return position.getComponent(1);
+    }
 }
