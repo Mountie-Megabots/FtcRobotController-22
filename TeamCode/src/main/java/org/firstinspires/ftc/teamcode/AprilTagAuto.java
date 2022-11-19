@@ -137,18 +137,42 @@ public class AprilTagAuto extends LinearOpMode {
 
                         autoStage=4;
                 }
-                //Raise Arm
-                if(autoStage == 4) {
-                    base.moveArmToPosition(-5868);
-                    if (base.getArmPosition() < -5800) {
-                        runtime.reset();
-                        base.barbOff();
-                        autoStage++;
+
+            }
+            //Raise Arm
+            else if(autoStage == 4) {
+                base.moveArmToPosition(-5868);
+                if (base.getArmPosition() < -5800) {
+                    runtime.reset();
+                    base.barbOff();
+                    autoStage++;
+                }
+            }
+            else if(autoStage == 5) {
+                if (runtime.seconds() >= 2) {
+                    runtime.reset();
+                    base.barbOff();
+                    autoStage++;
+                }
+            }
+            else if(autoStage == 6) {
+                if( base.driveToPosition(50,0,0,.5,.2)) {
+                    base.moveArmToPosition(-1200);
+                    runtime.reset();
+                    autoStage++;
+                    if(parkingSpace == 1){
+                        autoStage=7;
+                    }
+                    else if(parkingSpace == 3){
+                        autoStage=8;
+                    }
+                    else{
+                        autoStage=9;
                     }
                 }
             }
             //Parking Space 1
-            /*else if(autoStage == 3){
+            else if(autoStage == 7){
                 if( !base.driveToPosition(50, -23, 0,.4,.2)) {
                     telemetry.addData("Path", "Driving to Parking Space 1: %4.1f S Elapsed", runtime.seconds());
                     telemetry.addData("Heading", base.getHeading());
@@ -158,11 +182,11 @@ public class AprilTagAuto extends LinearOpMode {
                 else{
                     base.drive(0,0,0, false);
                     runtime.reset();
-                    autoStage=5;
+                    autoStage=9;
                 }
             }
             //Parking Space 3
-            else if(autoStage == 4){
+            else if(autoStage == 8){
                 if( !base.driveToPosition(50, 23, 0,.4,.2)) {
                     telemetry.addData("Path", "Driving to Parking Space 3: %4.1f S Elapsed", runtime.seconds());
                     telemetry.addData("Heading", base.getHeading());
@@ -172,11 +196,11 @@ public class AprilTagAuto extends LinearOpMode {
                 else{
                     base.drive(0,0,0, false);
                     runtime.reset();
-                    autoStage=5;
+                    autoStage=9;
                 }
-            }*/
+            }
             //Done
-            else if(autoStage == 5){
+            else if(autoStage == 9){
                     telemetry.addData("Path", "Reached Parking Space %d!",parkingSpace);
 
                     base.drive(0,0,0,false);
