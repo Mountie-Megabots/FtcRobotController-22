@@ -41,7 +41,7 @@ public class TelepBaseDemo extends LinearOpMode {
             if(gamepad1.a){
                 base.resetHeading();
             }
-            
+
             if (gamepad2.x) {
                 base.barbOff();
             }
