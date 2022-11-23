@@ -81,7 +81,7 @@ public class AprilTagAutoRight extends LinearOpMode {
             }
             //Drive Forward
             if(autoStage == 2){
-                if( !base.driveToPosition(49,0,0,.5,.2)) {
+                if( !base.driveToPosition(49,0,0,.5,.25)) {
                     telemetry.addData("Path", "Leg 1: %4.1f S Elapsed", runtime.seconds());
                     telemetry.addData("Heading", base.getHeading());
                     telemetry.addData("X", base.odometry.currentPosition().getComponents()[0]);
@@ -123,7 +123,7 @@ public class AprilTagAutoRight extends LinearOpMode {
             }
             //Turn To High Pole
             if(autoStage == 3){
-                if( !base.driveToPosition(50,0,-45,.5,.2)) {
+                if( !base.driveToPosition(50,0,-45,.5,.25)) {
                     telemetry.addData("Path", "Leg 1: %4.1f S Elapsed", runtime.seconds());
                     telemetry.addData("Heading", base.getHeading());
                     telemetry.addData("X", base.odometry.currentPosition().getComponents()[0]);
@@ -156,7 +156,7 @@ public class AprilTagAutoRight extends LinearOpMode {
                 }
             }
             else if(autoStage == 6) {
-                if( base.driveToPosition(50,0,0,.5,.2)) {
+                if( base.driveToPosition(50,0,0,.5,.25)) {
                     base.moveArmToPosition(-1200);
                     runtime.reset();
                     autoStage++;
@@ -173,7 +173,7 @@ public class AprilTagAutoRight extends LinearOpMode {
             }
             //Parking Space 1
             else if(autoStage == 7){
-                if( !base.driveToPosition(50, -23, 0,.4,.2)) {
+                if( !base.driveToPosition(50, -23, 0,.4,.25)) {
                     telemetry.addData("Path", "Driving to Parking Space 1: %4.1f S Elapsed", runtime.seconds());
                     telemetry.addData("Heading", base.getHeading());
                     telemetry.addData("X", base.odometry.currentPosition().getComponents()[0]);
@@ -187,7 +187,7 @@ public class AprilTagAutoRight extends LinearOpMode {
             }
             //Parking Space 3
             else if(autoStage == 8){
-                if( !base.driveToPosition(50, 23, 0,.4,.2)) {
+                if( !base.driveToPosition(50, 23, 0,.4,.25)) {
                     telemetry.addData("Path", "Driving to Parking Space 3: %4.1f S Elapsed", runtime.seconds());
                     telemetry.addData("Heading", base.getHeading());
                     telemetry.addData("X", base.odometry.currentPosition().getComponents()[0]);

@@ -371,11 +371,22 @@ public class RobotBase {
     }
 
     public void barbOff(){
-        barb.setPosition(0);
+        if(this.isRedBot){
+            barb.setPosition(1);
+        }
+        else{
+            barb.setPosition(0);
+        }
+
     }
 
     public void barbOn(){
-        barb.setPosition(1);
+        if(this.isRedBot){
+            barb.setPosition(0);
+        }
+        else{
+            barb.setPosition(1);
+        }
     }
 
     public boolean getLimitSwitch(){
